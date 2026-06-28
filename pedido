@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Catálogo – Móvil Shop RD</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0d14; --surface: #111827; --card: #1a2235;
+      --border: #1e3a5f; --accent: #1d4ed8; --accent2: #3b82f6;
+      --gold: #f59e0b; --text: #f0f6ff; --muted: #7a90b0; --green: #22c55e;
+    }
+    html { background: #0a0d14; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; }
+
+    header {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 10px 16px; position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo-text { font-size: 16px; font-weight: 900; letter-spacing: -0.5px; color: #fff; }
+    .logo-text span { color: var(--accent2); }
+    .cart-btn {
+      background: var(--accent); color: white; border: none; border-radius: 10px;
+      padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .cart-count {
+      background: var(--gold); color: #000; border-radius: 50%;
+      width: 18px; height: 18px; font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .hero { padding: 28px 20px 16px; text-align: center; background: var(--bg); }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(29,78,216,0.15); border: 1px solid rgba(59,130,246,0.3);
+      color: var(--accent2); font-size: 12px; font-weight: 600;
+      padding: 4px 12px; border-radius: 20px; margin-bottom: 12px;
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .hero h1 { font-size: clamp(24px,6vw,38px); font-weight: 900; letter-spacing: -1px; line-height: 1.1; margin-bottom: 8px; }
+    .hero h1 span { background: linear-gradient(90deg,var(--accent2),var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .hero p { color: var(--muted); font-size: 14px; margin-bottom: 6px; }
+    .stock-badge { display:inline-flex; align-items:center; gap:5px; color:var(--green); font-size:12px; font-weight:600; }
+    .dot { width:7px; height:7px; background:var(--green); border-radius:50%; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    .filtros-wrapper { position: sticky; top: 65px; z-index: 90; background: var(--bg); padding: 10px 0 6px; border-bottom: 1px solid var(--border); }
+    .filtros { display: flex; gap: 8px; padding: 0 16px; overflow-x: auto; scrollbar-width: none; }
+    .filtros::-webkit-scrollbar { display: none; }
+    .filtro-btn {
+      background: var(--card); border: 1px solid var(--border); color: var(--muted);
+      border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 600;
+      cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0;
+    }
+    .filtro-btn:hover { border-color: var(--accent2); color: var(--text); }
+    .filtro-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+    .catalog-wrapper { padding: 16px 16px 130px; max-width: 720px; margin: 0 auto; background: var(--bg); }
+    .brand-section { margin-bottom: 28px; background: var(--bg); }
+    .brand-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; background: var(--bg); }
+    .brand-name { font-size:18px; font-weight:900; color:#ffffff; background: var(--accent); padding:3px 14px; border-radius:8px; }
+    .brand-count { font-size:11px; font-weight:600; color:var(--muted); background:rgba(59,130,246,0.1); border:1px solid rgba(59,130,246,0.2); padding:2px 8px; border-radius:20px; }
+    .brand-divider { flex:1; height:1px; background:var(--border); }
+    .brand-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:10px; }
+
+    .card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:14px 12px; display:flex; flex-direction:column; gap:9px; transition:border-color 0.2s,transform 0.2s; }
+    .card:hover { border-color:var(--accent2); transform:translateY(-2px); }
+    .card.selected { border-color:var(--accent2); background:rgba(29,78,216,0.12); }
+    .phone-icon { font-size:28px; text-align:center; }
+    .card-name { font-size:13px; font-weight:700; color:var(--text); line-height:1.3; }
+    .card-storage { font-size:11px; color:var(--accent2); font-weight:600; background:rgba(59,130,246,0.12); display:inline-block; padding:2px 8px; border-radius:20px; }
+    .extra-badge { font-size:11px; font-weight:700; color:var(--gold); background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); border-radius:20px; padding:3px 9px; display:inline-block; }
+    .card-price { font-size:15px; font-weight:900; color:var(--gold); }
+    .qty-controls { display:flex; align-items:center; justify-content:space-between; background:var(--bg); border-radius:10px; padding:4px; }
+    .qty-btn { background:var(--accent); color:white; border:none; width:28px; height:28px; border-radius:7px; font-size:16px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .qty-btn:hover { background:var(--accent2); }
+    .qty-num { font-size:15px; font-weight:700; color:var(--text); min-width:24px; text-align:center; }
+
+    .footer-bar { position:fixed; bottom:0; left:0; right:0; background:var(--surface); border-top:1px solid var(--border); padding:14px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; z-index:200; }
+    .footer-info { display:flex; flex-direction:column; gap:2px; }
+    .footer-label { font-size:11px; color:var(--muted); }
+    .footer-total { font-size:18px; font-weight:900; color:var(--gold); }
+    .empty-hint { color:var(--muted); font-size:12px; }
+    .send-btn { background:linear-gradient(135deg,#25d366,#128c7e); color:white; border:none; border-radius:12px; padding:12px 20px; font-size:14px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px; white-space:nowrap; }
+    .send-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="logo-text">MÓVIL SHOP <span>RD</span></span></div>
+  <button class="cart-btn">
+    🛒 Pedido <span class="cart-count" id="cartCount">0</span>
+  </button>
+</header>
+
+<div class="hero">
+  <div class="hero-tag">⚡ Inventario actualizado</div>
+  <h1>Catálogo de<br/><span>Celulares</span></h1>
+  <p>Selecciona equipos y envía tu pedido por WhatsApp</p>
+  <div class="stock-badge"><span class="dot"></span> Stock disponible ahora</div>
+</div>
+
+<div class="filtros-wrapper">
+  <div class="filtros" id="filtros"></div>
+</div>
+
+<div class="catalog-wrapper" id="catalogWrapper"></div>
+
+<div class="footer-bar">
+  <div class="footer-info">
+    <span class="footer-label">Total de tu pedido</span>
+    <span class="footer-total" id="totalDisplay">RD$0</span>
+    <span class="empty-hint" id="emptyHint">Selecciona equipos arriba ↑</span>
+  </div>
+  <button class="send-btn" id="sendBtn" onclick="enviarPedido()" disabled>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    Enviar pedido
+  </button>
+</div>
+
+<script>
+  const WHATSAPP = "18492509710";
+  const marcas = [
+
+    { nombre: "Motorola", productos: [
+      { id:40, nombre:"Motorola G06",          storage:"128GB+12GB", precio:6500,  extra:"" },
+      { id:41, nombre:"Motorola G06",          storage:"256GB+12GB", precio:7200,  extra:"" },
+      { id:42, nombre:"Motorola G15",          storage:"128GB+12GB", precio:7250,  extra:"" },
+      { id:43, nombre:"Motorola G15",          storage:"512GB+12GB", precio:9650,  extra:"" },
+      { id:44, nombre:"Motorola G35 5G",       storage:"256GB+4GB",  precio:9000,  extra:"" },
+      { id:45, nombre:"Motorola Edge 60 Fusion",storage:"256GB+24GB",precio:16300, extra:"" },
+      { id:46, nombre:"Motorola Edge 60 Pro 5G",storage:"512GB+36GB",precio:27300, extra:"" },
+      { id:47, nombre:"Motorola Edge 70 Fusion",storage:"256GB+8GB", precio:24400, extra:"" },
+    ]},
+    { nombre: "Xiaomi", productos: [
+      { id:50, nombre:"Redmi A7 Pro",      storage:"64GB+4GB",   precio:6100,  extra:"" },
+      { id:51, nombre:"Redmi 15C",         storage:"256GB+4GB",  precio:7800,  extra:"" },
+      { id:52, nombre:"Redmi 15",          storage:"256GB+8GB",  precio:10600, extra:"" },
+      { id:53, nombre:"Note 15 Pro 5G",    storage:"256GB+8GB",  precio:16950, extra:"" },
+      { id:54, nombre:"Poco F8 Pro",       storage:"512GB+12GB", precio:35900, extra:"" },
+    ]},
+    { nombre: "Oukitel", productos: [
+      { id:15, nombre:"Oukitel C1",        storage:"128GB+4GB",  precio:6000,  extra:"" },
+      { id:17, nombre:"Oukitel C26",       storage:"128GB+4GB",  precio:6800,  extra:"" },
+      { id:60, nombre:"Oukitel C61",       storage:"128GB+16GB", precio:6900,  extra:"" },
+      { id:61, nombre:"Oukitel C61 GT",    storage:"128GB+16GB", precio:7000,  extra:"" },
+      { id:81, nombre:"Oukitel C61 Pro",   storage:"256GB+24GB", precio:8100,  extra:"" },
+      { id:16, nombre:"Oukitel C60 Pro",   storage:"256GB+8GB",  precio:9300,  extra:"" },
+      { id:65, nombre:"Oukitel P1 Pro",    storage:"256GB+4GB",  precio:10000, extra:"" },
+      { id:66, nombre:"Oukitel P1 Pro",    storage:"512GB+8GB",  precio:11600, extra:"" },
+      { id:69, nombre:"Oukitel G5",        storage:"64GB+4GB",   precio:6850,  extra:"" },
+      { id:70, nombre:"Oukitel G6",        storage:"64GB+4GB",   precio:8150,  extra:"" },
+      { id:71, nombre:"Oukitel G7",        storage:"128GB+4GB",  precio:9650,  extra:"" },
+      { id:72, nombre:"Oukitel G7",        storage:"256GB+8GB",  precio:11000, extra:"" },
+      { id:73, nombre:"Oukitel WP28E",     storage:"64GB+16GB",  precio:8050,  extra:"" },
+      { id:74, nombre:"Oukitel WP53 Pro",  storage:"256GB+8GB",  precio:11000, extra:"" },
+      { id:75, nombre:"Oukitel WP39 5G",   storage:"256GB+24GB", precio:14100, extra:"" },
+      { id:76, nombre:"Oukitel WP55 S",    storage:"256GB+24GB", precio:14300, extra:"" },
+      { id:79, nombre:"Oukitel WP60",      storage:"256GB+8GB",  precio:16200, extra:"" },
+      { id:82, nombre:"Oukitel WP56",      storage:"256GB+32GB", precio:16200, extra:"" },
+      { id:83, nombre:"Oukitel WP19 Pro",  storage:"256GB+24GB", precio:16200, extra:"" },
+      { id:77, nombre:"Oukitel WP55 Pro",  storage:"512GB+16GB", precio:18100, extra:"" },
+      { id:78, nombre:"Oukitel WP56",      storage:"512GB+12GB", precio:19600, extra:"" },
+      { id:84, nombre:"Oukitel WP60",      storage:"512GB+16GB", precio:19900, extra:"" },
+      { id:80, nombre:"Oukitel WP66",      storage:"512GB+12GB", precio:20200, extra:"" },
+      { id:85, nombre:"Oukitel WP61 Plus", storage:"512GB+12GB", precio:23900, extra:"" },
+      { id:86, nombre:"Oukitel WP200 Pro", storage:"1TB+24GB",   precio:32200, extra:"" },
+    ]},
+    { nombre: "Honor", productos: [
+      { id:90, nombre:"Honor Choice Watch 2I", storage:"",          precio:2400,  extra:"" },
+      { id:91, nombre:"Honor Play 10",         storage:"64GB+6GB",  precio:5000,  extra:"" },
+      { id:92, nombre:"Honor X8C",             storage:"256GB+8GB", precio:11600, extra:"" },
+      { id:93, nombre:"Honor X8C",             storage:"512GB+8GB", precio:13100, extra:"" },
+      { id:94, nombre:"Honor 400 Smart",       storage:"256GB+8GB", precio:13700, extra:"" },
+      { id:95, nombre:"Honor Magic 8 Lite",    storage:"256GB+8GB", precio:20700, extra:"" },
+    ]},
+    { nombre: "M-Horse", productos: [
+      { id:100, nombre:"M-Horse M17 Pro",       storage:"32GB+3GB",   precio:4200, extra:"" },
+      { id:101, nombre:"M-Horse S26+",          storage:"32GB+4GB",   precio:4200, extra:"" },
+      { id:102, nombre:"M-Horse S25 Pro+",      storage:"64GB+6GB",   precio:5000, extra:"" },
+      { id:103, nombre:"M-Horse M17 Pro",       storage:"64GB+4GB",   precio:5500, extra:"" },
+      { id:104, nombre:"M-Horse S26 Ultra Max", storage:"64GB+8GB",   precio:5500, extra:"" },
+      { id:105, nombre:"M-Horse Note 14 Pro+ Ultra", storage:"128GB+8GB", precio:6000, extra:"" },
+      { id:106, nombre:"M-Horse M17 Pro Max",   storage:"128GB+8GB",  precio:6350, extra:"🎧 AirPods incluidos" },
+      { id:107, nombre:"M-Horse S26 Ultra Max+",storage:"128GB+12GB", precio:6350, extra:"" },
+    ]},
+    { nombre: "ZTE", productos: [
+      { id:110, nombre:"ZTE A35E",  storage:"64GB+6GB",       precio:5000, extra:"" },
+      { id:111, nombre:"ZTE A54",   storage:"64GB+4GB (2SIM)", precio:5100, extra:"" },
+      { id:112, nombre:"ZTE A75",   storage:"64GB+10GB",      precio:7200, extra:"" },
+    ]},
+    { nombre: "Apple", productos: [
+      { id:1,  nombre:"iPhone 13",         storage:"256GB", precio:18500, extra:"" },
+      { id:2,  nombre:"iPhone 13 Pro",     storage:"128GB", precio:20800, extra:"" },
+      { id:3,  nombre:"iPhone 14",         storage:"128GB", precio:16600, extra:"" },
+      { id:4,  nombre:"iPhone 14 Plus",    storage:"128GB", precio:19800, extra:"" },
+      { id:5,  nombre:"iPhone 14 Pro Max", storage:"128GB", precio:30500, extra:"" },
+      { id:6,  nombre:"iPhone 12 Pro",     storage:"256GB", precio:16800, extra:"" },
+      { id:7,  nombre:"iPhone 15 Pro Max", storage:"256GB", precio:37500, extra:"" },
+    ]},
+  ];
+
+  const cantidades = {};
+  marcas.forEach(m => m.productos.forEach(p => cantidades[p.id] = 0));
+  const fmt = n => "RD$" + n.toLocaleString("es-DO");
+
+  let filtroActivo = "Todos";
+
+  function renderFiltros() {
+    const filtros = document.getElementById("filtros");
+    const opciones = ["Todos", ...marcas.map(m => m.nombre)];
+    filtros.innerHTML = opciones.map(f => `
+      <button class="filtro-btn ${f === filtroActivo ? 'active' : ''}" onclick="setFiltro('${f}')">${f}</button>
+    `).join("");
+  }
+
+  function setFiltro(marca) {
+    filtroActivo = marca;
+    renderFiltros();
+    renderCatalog();
+  }
+
+  function renderCatalog() {
+    const marcasFiltradas = filtroActivo === "Todos" ? marcas : marcas.filter(m => m.nombre === filtroActivo);
+    document.getElementById("catalogWrapper").innerHTML = marcasFiltradas.map(m => `
+      <div class="brand-section">
+        <div class="brand-header">
+          <span class="brand-name">${m.nombre}</span>
+          <span class="brand-count">${m.productos.length} equipo${m.productos.length>1?'s':''}</span>
+          <div class="brand-divider"></div>
+        </div>
+        <div class="brand-grid">
+          ${m.productos.map(p => `
+            <div class="card ${cantidades[p.id]>0?'selected':''}" id="card-${p.id}">
+              <div class="phone-icon">📱</div>
+              <div class="card-name">${p.nombre}</div>
+              <div class="card-storage">${p.storage}</div>
+              ${p.extra?`<div class="extra-badge">${p.extra}</div>`:''}
+              <div class="card-price">${fmt(p.precio)}</div>
+              <div class="qty-controls">
+                <button class="qty-btn" onclick="cambiar(${p.id},-1)">−</button>
+                <span class="qty-num" id="qty-${p.id}">${cantidades[p.id]}</span>
+                <button class="qty-btn" onclick="cambiar(${p.id},1)">+</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function cambiar(id, delta) {
+    cantidades[id] = Math.max(0, cantidades[id] + delta);
+    document.getElementById("qty-"+id).textContent = cantidades[id];
+    document.getElementById("card-"+id).classList.toggle("selected", cantidades[id]>0);
+    actualizar();
+  }
+
+  function actualizar() {
+    let total=0, items=0;
+    marcas.forEach(m => m.productos.forEach(p => { total+=p.precio*cantidades[p.id]; items+=cantidades[p.id]; }));
+    document.getElementById("totalDisplay").textContent = fmt(total);
+    document.getElementById("cartCount").textContent = items;
+    document.getElementById("sendBtn").disabled = items===0;
+    document.getElementById("emptyHint").style.display = items===0?"block":"none";
+  }
+
+  function enviarPedido() {
+    let total=0, lineas=[];
+    marcas.forEach(m => {
+      const sel = m.productos.filter(p=>cantidades[p.id]>0);
+      if(sel.length){ 
+        lineas.push(`\n*CELULARES ${m.nombre.toUpperCase()}*`);
+        sel.forEach(p=>{ const s=p.precio*cantidades[p.id]; total+=s; lineas.push(`• ${p.nombre.toUpperCase()} ${p.storage} (${cantidades[p.id]}x) - ${fmt(s)}`); });
+      }
+    });
+    if(!lineas.length) return;
+    window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(`*LISTADO DEL DIA*\n`+lineas.join("\n")+`\n\n*Total: ${fmt(total)}*`)}`, "_blank");
+  }
+
+  renderFiltros(); renderCatalog(); actualizar();
+</script>
+</body>
+</html>
